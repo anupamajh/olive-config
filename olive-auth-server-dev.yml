@@ -18,7 +18,7 @@ spring:
     name: olive-auth-server
 
   datasource:
-    url: jdbc:mysql://139.59.77.84:8090/olive-foundation?createDatabaseIfNotExist=true&useSSL=false
+    url: jdbc:mysql://139.59.77.84:8090/olive-foundation?createDatabaseIfNotExist=true&useLegacyDatetimeCode=false
     username: root
     password: C@rmel007
     driver-class-name: com.mysql.cj.jdbc.Driver
