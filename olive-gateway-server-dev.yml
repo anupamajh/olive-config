@@ -1,0 +1,65 @@
+server:
+  port: 7070
+
+spring:
+  application:
+    name: olive-gateway-server    
+  cloud:
+    gateway:
+#      discovery:
+#        locator:
+#          enabled: true
+#          lower-case-service-id: true
+      routes:
+        - id: do-login
+          uri: lb://olive-auth-server
+          predicates:
+            - Path=/api/v1.0/doLogin
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/api/v1.0/doLogin, /oauth/token
+            
+        - id: refresh-token
+          uri: lb://olive-auth-server
+          predicates:
+            - Path=/api/v1.0/refreshToken
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/api/v1.0/refreshToken, /oauth/token
+            
+            
+        - id: foundation-get-org
+#          uri: 'http://localhost:7072'
+          uri: lb://olive-foundation-server
+          predicates:
+            - Path=/api/org/**
+            - Method=GET
+            - Query=id
+            - Header=Authorization, Bearer (.*)
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/api(?<segment>/?.*), $\{segment}
+
+
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          jwk-set-uri: "http://localhost:7071/.well-known/jwks.json"
+          
+#eureka:
+#  client:
+#    region: default
+#    registry-fetch-interval-seconds: 5
+#    service-url:
+#      defaultZone: http://localhost:7074/eureka/
+      
+logging:
+#  level:
+#    root: trace
+  file:
+    name: ./logs/olive-gateway-server.log
+    
+
